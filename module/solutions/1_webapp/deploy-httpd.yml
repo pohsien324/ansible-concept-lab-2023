@@ -1,0 +1,27 @@
+- name: Deploy httpd Server
+  hosts: linux
+  gather_facts: no
+  tasks:
+  - name: Install httpd and start
+    yum:
+      name: httpd
+      state: present
+
+  - name: Customize index.html file
+    template:
+      src: templates/index.html.j2
+      dest: /var/www/html/index.html
+    notify: Restart httpd service
+
+  - name: Start httpd service
+    systemd: 
+      name: httpd 
+      enabled: yes 
+      state: started
+
+  handlers:
+  - name: Restart httpd service
+    systemd:
+      name: httpd
+      enabled: yes
+      state: restarted
