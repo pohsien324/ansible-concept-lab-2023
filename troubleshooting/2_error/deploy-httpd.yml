@@ -15,13 +15,25 @@
 
   - name: Start httpd service
     systemd: 
-      name: apche2 
+      name: apache2 
       enabled: yes 
       state: started
-
+  
+  - name: Allow http connection through firewalld
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+    notify: Reload the firewalld configuration
+  
   handlers:
   - name: Restart httpd service
     systemd:
-      name: apche2
+      name: apache2
       enabled: yes
       state: restarted
+
+  - name: Reload the firewalld configuration
+    command:
+      firewall-cmd --reload
+
